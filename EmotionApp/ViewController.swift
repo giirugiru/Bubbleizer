@@ -33,20 +33,29 @@ class ViewController: UIViewController {
     func spawnBubble(){ //FUNCTION BUAT SPAWN BUBBLE
         //IPHONE XR ORIGINAL SIZE 414x896
          //MANGGIL IMAGE FILE DARI ASSETS //RANDOMIZE UKURAN BUBBLE NYA
-        let randomSize = CGFloat.random(in: 30...100)
-        let imageView = UIImageView(frame: CGRect(x: .random(in: 25...389), y: .random(in: 25...871), width: randomSize, height: randomSize))
-        imageView.image = UIImage(named: "blueBubble")
+        let randomSize = CGFloat.random(in: 30...150)
+        let bubbleView = UIImageView(frame: CGRect(x: .random(in: 25...389), y: .random(in: 25...871), width: randomSize, height: randomSize))
+
+        bubbleView.image = UIImage(named: "blueBubble")
         UIView.transition(with: self.view, duration: 0.5, options: [.transitionCrossDissolve], animations: {
-            self.view.addSubview(imageView)
+            self.view.addSubview(bubbleView)
         }, completion: nil)
 //        self.view.addSubview(imageView) //SPAWN BUBBLE NYA
 
         
         let singleTap = UITapGestureRecognizer(target: self, action: #selector(tapDetected))
-        imageView.isUserInteractionEnabled = true
-        imageView.addGestureRecognizer(singleTap)
+        bubbleView.isUserInteractionEnabled = true
+        bubbleView.addGestureRecognizer(singleTap)
         
         
+        CATransaction .begin()
+        CATransaction .setCompletionBlock {
+            UIView .transition(with: bubbleView, duration: 0.5, options: UIView.AnimationOptions.transitionCrossDissolve, animations: {
+                bubbleView.alpha = 0
+            }, completion: { (true) in
+                bubbleView.removeFromSuperview()
+            })
+        }
         //ANIMASI FLOATING BUBBLE
         
        let bubblePath = UIBezierPath()
@@ -55,9 +64,9 @@ class ViewController: UIViewController {
         let anim = CAKeyframeAnimation(keyPath: "position")
         anim.path = bubblePath.cgPath
         anim.rotationMode = CAAnimationRotationMode.rotateAuto
-//        anim.repeatCount = Float.infinity
-        anim.duration = 50
-        imageView.layer.add(anim, forKey: "animate position along path")
+        anim.repeatCount = 1
+        anim.duration = 10
+        bubbleView.layer.add(anim, forKey: "animate position along path")
         
         //        bubbleImageView.isUserInteractionEnabled = true
         
@@ -77,7 +86,7 @@ class ViewController: UIViewController {
 //            UIView.animate(withDuration: 0.1, delay: 0, options: [], animations: {
 //                bubble.view?.frame = CGRect(x: (bubble.view?.frame.origin.x)! - 10, y: (bubble.view?.frame.origin.y)!, width: (bubble.view?.frame.width)!, height: (bubble.view?.frame.height)!)
 //            })
-            bubble.view?.alpha = 1
+        bubble.view?.alpha = 1
 //
 //        }
     }
