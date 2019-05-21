@@ -7,15 +7,20 @@
 //
 
 import UIKit
+import AVFoundation
 
 class ViewController: UIViewController {
     
 //    var imageView: UIImageView = []
+    var audioPlayer: AVAudioPlayer?
+    
     @IBOutlet weak var SpawnBubbleOutlet: UIButton! //OUTLET BUTTON BUAT SPAWN BUBBLE
     @IBAction func SpawnBubbleButton(_ sender: UIButton) { //FUNCTION BUAT SPAWN BUBBLE KALO DI TOUCH
+        spawnBubbleButtonAnimation()
         spawnBubble()
+        playSoundBubbleSpawn()
+        
     }
-    
     
     /*lazy var bubbleImageView: UIImageView = { // LAZY VARIABLE = DI INITIALIZE KALO DIPANGGIL DOANG
         
@@ -26,69 +31,118 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-//        let pokeBubble = UITapGestureRecognizer(target: self, action: #selector(ViewController.))
     }
 
+    //ANIMASI BUAT BUTTON NYA
+    func spawnBubbleButtonAnimation(){
+        UIView.animate(withDuration: 0.25, delay: 0, options: [], animations: {
+            self.SpawnBubbleOutlet.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+        }) { (true) in
+            UIView.animate(withDuration: 0.25, animations: {
+                self.SpawnBubbleOutlet.transform = CGAffineTransform.identity
+
+            })
+
+        }
+    }
+    
+    //FUNCTION BUAT SFX BUBBLE SPAWN
+    func playSoundBubbleSpawn() {
+        let alertSound = URL(fileURLWithPath: Bundle.main.path(forResource: "BubbleSpawning", ofType: "mp3")!)
+        print(alertSound)
+        
+        try! AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+        try! AVAudioSession.sharedInstance().setActive(true)
+        
+        try! audioPlayer = AVAudioPlayer(contentsOf: alertSound)
+        audioPlayer!.prepareToPlay()
+        audioPlayer!.play()
+    }
+    
+    //FUNCTION BUAT SFX BUBBLE POP
+    func playSoundBubblePop() {
+        let alertSound = URL(fileURLWithPath: Bundle.main.path(forResource: "BubblePopping", ofType: "mp3")!)
+        print(alertSound)
+        
+        try! AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+        try! AVAudioSession.sharedInstance().setActive(true)
+        
+        try! audioPlayer = AVAudioPlayer(contentsOf: alertSound)
+        audioPlayer!.prepareToPlay()
+        audioPlayer!.play()
+    }
+    
+    
     
     func spawnBubble(){ //FUNCTION BUAT SPAWN BUBBLE
         //IPHONE XR ORIGINAL SIZE 414x896
-         //MANGGIL IMAGE FILE DARI ASSETS //RANDOMIZE UKURAN BUBBLE NYA
+        //RANDOMIZE UKURAN BUBBLE NYA
         let randomSize = CGFloat.random(in: 30...150)
-        let bubbleView = UIImageView(frame: CGRect(x: .random(in: 25...389), y: .random(in: 25...871), width: randomSize, height: randomSize))
+        let randomX = CGFloat.random(in: 25...389)
+        let randomY = CGFloat.random(in: 25...871)
+        let bubbleView = UIImageView(frame: CGRect(x: randomX, y: randomY, width: randomSize, height: randomSize))
 
-        bubbleView.image = UIImage(named: "blueBubble")
+        bubbleView.image = UIImage(named: "blueBubble") //MANGGIL IMAGE FILE DARI ASSETS
         UIView.transition(with: self.view, duration: 0.5, options: [.transitionCrossDissolve], animations: {
-            self.view.addSubview(bubbleView)
+            self.view.addSubview(bubbleView) //MUNCULIN BUBBLE NYA
         }, completion: nil)
-//        self.view.addSubview(imageView) //SPAWN BUBBLE NYA
-
         
+        
+        //GESTURE RECOGNIZER
         let singleTap = UITapGestureRecognizer(target: self, action: #selector(tapDetected))
-        bubbleView.isUserInteractionEnabled = true
+        bubbleView.isUserInteractionEnabled = false
         bubbleView.addGestureRecognizer(singleTap)
         
         
-        CATransaction .begin()
-        CATransaction .setCompletionBlock {
-            UIView .transition(with: bubbleView, duration: 0.5, options: UIView.AnimationOptions.transitionCrossDissolve, animations: {
-                bubbleView.alpha = 0
-            }, completion: { (true) in
-                bubbleView.removeFromSuperview()
-            })
-        }
         //ANIMASI FLOATING BUBBLE
-        
-       let bubblePath = UIBezierPath()
+        let bubblePath = UIBezierPath() //PATH BUAT ANIMASINYA
         bubblePath.move(to: CGPoint(x: .random(in: 25...389), y: 871))
         bubblePath.addCurve(to: CGPoint(x: .random(in: 25...389), y: .random(in: 25...871)), controlPoint1: CGPoint(x: .random(in: 25...389), y: .random(in: 25...871)), controlPoint2: CGPoint(x: .random(in: 25...389), y: .random(in: 25...871)))
-        let anim = CAKeyframeAnimation(keyPath: "position")
+        
+        let anim = CAKeyframeAnimation(keyPath: "position") //ANIMATE OBJECT SESUAI PATH NYA
         anim.path = bubblePath.cgPath
-        anim.rotationMode = CAAnimationRotationMode.rotateAuto
+//        anim.rotationMode = CAAnimationRotationMode.rotateAuto
         anim.repeatCount = 1
-        anim.duration = 10
+        anim.duration = 12
+        //anim.speed = 12.0
         bubbleView.layer.add(anim, forKey: "animate position along path")
         
-        //        bubbleImageView.isUserInteractionEnabled = true
+        
+        //BUAT EXIT ANIMATION (BUBBLE NYA OTOMATIS ILANG SETELAH BBRP DETIK
+        CATransaction.begin()
+        CATransaction.setCompletionBlock {
+            UIView.animateKeyframes(withDuration: 0.5, delay: 10, options: [], animations: {
+                bubbleView.alpha = 0
+            }, completion: { (isFinish) in
+                self.playSoundBubblePop()
+            })
+//            UIView.transition(with: bubbleView, duration: 10, options: [], animations: {
+//                bubbleView.alpha = 0
+//            }, completion: { (true) in
+//            })
+        }
+//
         
 //        let tapGestureRecognizer = UITapGestureRecognizer(target: <#T##Any?#>, action: <#T##Selector?#>)
 //        bubbleImageView.isUserInteractionEnabled = true
 //        bubbleImageView.addGestureRecognizer(tapGestureRecognizer)
     }
     
+    //FUNCTION BUAT GESTURE RECOGNIZER
     @objc func tapDetected(bubble: UITapGestureRecognizer){
-//        print(bubble)
+        print(bubble)
         print("tap detected")
-//        bubble.view?.alpha = 0
-//        bubble.view?.removeFromSuperview()
-//        UIView.animate(withDuration: 0.1, delay: 0, options: [], animations: {
-//            bubble.view?.frame = CGRect(x: (bubble.view?.frame.origin.x)! + 10, y: (bubble.view?.frame.origin.y)!, width: (bubble.view?.frame.width)!, height: (bubble.view?.frame.height)!)
-//        }) { (true) in
-//            UIView.animate(withDuration: 0.1, delay: 0, options: [], animations: {
-//                bubble.view?.frame = CGRect(x: (bubble.view?.frame.origin.x)! - 10, y: (bubble.view?.frame.origin.y)!, width: (bubble.view?.frame.width)!, height: (bubble.view?.frame.height)!)
-//            })
+        bubble.view?.alpha = 0
+        bubble.view?.removeFromSuperview()
+        UIView.animate(withDuration: 0.1, delay: 0, options: [], animations: {
+            bubble.view?.frame = CGRect(x: (bubble.view?.frame.origin.x)! + 10, y: (bubble.view?.frame.origin.y)!, width: (bubble.view?.frame.width)!, height: (bubble.view?.frame.height)!)
+        }) { (true) in
+            UIView.animate(withDuration: 0.1, delay: 0, options: [], animations: {
+                bubble.view?.frame = CGRect(x: (bubble.view?.frame.origin.x)! - 10, y: (bubble.view?.frame.origin.y)!, width: (bubble.view?.frame.width)!, height: (bubble.view?.frame.height)!)
+            })
         bubble.view?.alpha = 1
-//
-//        }
+
+        }
     }
     
 //        UIView.animate(withDuration: 1, delay: 0, options: [], animations: {

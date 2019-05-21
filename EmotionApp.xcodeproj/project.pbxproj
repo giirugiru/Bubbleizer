@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BA07F2672293AE260077282C /* BubblePopping.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BA07F2652293AE260077282C /* BubblePopping.mp3 */; };
+		BA07F2682293AE260077282C /* BubbleSpawning.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BA07F2662293AE260077282C /* BubbleSpawning.mp3 */; };
 		BAE3E0AF2285C8DB00E03476 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAE3E0AE2285C8DB00E03476 /* AppDelegate.swift */; };
 		BAE3E0B12285C8DB00E03476 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAE3E0B02285C8DB00E03476 /* ViewController.swift */; };
 		BAE3E0B42285C8DB00E03476 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BAE3E0B22285C8DB00E03476 /* Main.storyboard */; };
@@ -15,6 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BA07F2652293AE260077282C /* BubblePopping.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = BubblePopping.mp3; sourceTree = "<group>"; };
+		BA07F2662293AE260077282C /* BubbleSpawning.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = BubbleSpawning.mp3; sourceTree = "<group>"; };
 		BAE3E0AB2285C8DB00E03476 /* EmotionApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EmotionApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BAE3E0AE2285C8DB00E03476 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BAE3E0B02285C8DB00E03476 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -56,6 +60,8 @@
 			children = (
 				BAE3E0AE2285C8DB00E03476 /* AppDelegate.swift */,
 				BAE3E0B02285C8DB00E03476 /* ViewController.swift */,
+				BA07F2652293AE260077282C /* BubblePopping.mp3 */,
+				BA07F2662293AE260077282C /* BubbleSpawning.mp3 */,
 				BAE3E0B22285C8DB00E03476 /* Main.storyboard */,
 				BAE3E0B52285C8DD00E03476 /* Assets.xcassets */,
 				BAE3E0B72285C8DD00E03476 /* LaunchScreen.storyboard */,
@@ -122,9 +128,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA07F2672293AE260077282C /* BubblePopping.mp3 in Resources */,
 				BAE3E0B92285C8DD00E03476 /* LaunchScreen.storyboard in Resources */,
 				BAE3E0B62285C8DD00E03476 /* Assets.xcassets in Resources */,
 				BAE3E0B42285C8DB00E03476 /* Main.storyboard in Resources */,
+				BA07F2682293AE260077282C /* BubbleSpawning.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
