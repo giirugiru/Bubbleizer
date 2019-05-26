@@ -27,13 +27,19 @@ class ViewController: UIViewController {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) { //TAP DIMANA AJA, BISA MUNCUL BUBBLE
         if let touch = touches.first {
-            let position = touch.location(in: view)
+            let position = touch.location(in: view) //TOUCH COORDINATES
             print(position)
             
-            let randomSize = CGFloat.random(in: 30...150)
+            let randomSize = CGFloat.random(in: 50...150)
             let bubbleView = UIImageView(frame: CGRect(x: position.x, y: position.y, width: randomSize, height: randomSize))
+            bubbleView.alpha = 0.85
             
-            bubbleView.image = UIImage(named: "blueBubble") //MANGGIL IMAGE FILE DARI ASSETS
+            //BUBBLE RANDOMIZER
+            let randomBubble = Int.random(in: 1...5)
+            print("bubbleImage\(randomBubble)")
+            
+            
+            bubbleView.image = UIImage(named: "bubbleImage\(randomBubble)") //MANGGIL IMAGE FILE DARI ASSETS
             UIView.transition(with: self.view, duration: 0.5, options: [.transitionCrossDissolve], animations: {
                 self.view.addSubview(bubbleView) //MUNCULIN BUBBLE NYA
             }, completion: nil)
@@ -46,6 +52,15 @@ class ViewController: UIViewController {
             bubbleView.isUserInteractionEnabled = false
             bubbleView.addGestureRecognizer(singleTap)*/
             
+            //PROGRAMATICALLY CIRCLE
+            /*let shape = SKShapeNode()
+            shape.path = UIBezierPath(roundedRect: CGRect(x: -128, y: -128, width: 256, height: 256), cornerRadius: 64).cgPath
+            shape.position = CGPoint(x: frame.midX, y: frame.midY)
+            shape.fillColor = UIColor.red
+            shape.strokeColor = UIColor.blue
+            shape.lineWidth = 10
+            addChild(shape)*/
+            
             
             //ANIMASI FLOATING BUBBLE
             let bubblePath = UIBezierPath() //PATH BUAT ANIMASINYA
@@ -56,7 +71,7 @@ class ViewController: UIViewController {
             anim.path = bubblePath.cgPath
             //        anim.rotationMode = CAAnimationRotationMode.rotateAuto
             anim.repeatCount = 1
-            anim.duration = 12
+            anim.duration = 7
             //anim.speed = 12.0
             bubbleView.layer.add(anim, forKey: "animate position along path")
             
@@ -64,7 +79,7 @@ class ViewController: UIViewController {
             //BUAT EXIT ANIMATION (BUBBLE NYA OTOMATIS ILANG SETELAH BBRP DETIK
             CATransaction.begin()
             CATransaction.setCompletionBlock {
-                UIView.animate(withDuration: 0.5, delay: 10, options: .curveLinear, animations: {
+                UIView.animate(withDuration: 0.5, delay: 5, options: .curveLinear, animations: {
                     bubbleView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
                 }, completion: { (isFinish) in
                     UIView.animate(withDuration: 0, delay: 0, options: .curveLinear, animations: {
