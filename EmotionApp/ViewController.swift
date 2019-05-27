@@ -10,11 +10,12 @@ import UIKit
 import AVFoundation
 
 class ViewController: UIViewController {
+    let notification = UINotificationFeedbackGenerator()
     
-    var audioPlayer: AVAudioPlayer?
-    var audioPlayer2: AVAudioPlayer?
+    var audioPlayer: AVAudioPlayer? //AUDIO PLAYER VARIABLE FOR BUBBLES PAWN
+    var audioPlayer2: AVAudioPlayer? //AUDIO PLAYER VARIABLE FOR BUBBLE POP
     
-//    @IBOutlet weak var SpawnBubbleOutlet: UIButton! //OUTLET BUTTON BUAT SPAWN BUBBLE
+//    @IBOutlet weak var SpawnBubbleOutlet: UIButton! //OUTLET BUTTON FOR SPAWNING BUBBLES
     @IBOutlet weak var TapAnywhereLabel: UILabel!
     
     
@@ -25,27 +26,30 @@ class ViewController: UIViewController {
 
     }*/
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) { //TAP DIMANA AJA, BISA MUNCUL BUBBLE
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) { //BUBBLE WILL SPAWN AT WHERE YOU TAP THE SCREEN
         if let touch = touches.first {
             let position = touch.location(in: view) //TOUCH COORDINATES
             print(position)
             
-            let randomSize = CGFloat.random(in: 50...150)
-            let bubbleView = UIImageView(frame: CGRect(x: position.x, y: position.y, width: randomSize, height: randomSize))
-            bubbleView.alpha = 0.85
+            let randomSize = CGFloat.random(in: 50...150) //BUBBLE SIZE
+            let bubbleView = UIImageView(frame: CGRect(x: position.x, y: position.y, width: randomSize, height: randomSize)) //BUBBLE POSITION
+            
             
             //BUBBLE RANDOMIZER
             let randomBubble = Int.random(in: 1...5)
+            if randomBubble == 1{
+            bubbleView.alpha = 1
+            }else{
+                bubbleView.alpha = 0.80
+            }
             print("bubbleImage\(randomBubble)")
-            
-            
-            bubbleView.image = UIImage(named: "bubbleImage\(randomBubble)") //MANGGIL IMAGE FILE DARI ASSETS
+            bubbleView.image = UIImage(named: "bubbleImage\(randomBubble)") //USE IMAGE FILE FROM ASSETS
             UIView.transition(with: self.view, duration: 0.5, options: [.transitionCrossDissolve], animations: {
-                self.view.addSubview(bubbleView) //MUNCULIN BUBBLE NYA
+                self.view.addSubview(bubbleView) //ADDING SUBVIEW FOR THE BUBBLE
             }, completion: nil)
             
-            playSoundBubbleSpawn()
-            tapAnywhereLabelAnimation()
+            playSoundBubbleSpawn() //BUBBLE SPAWN SFX
+            tapAnywhereLabelAnimation() //LABEL ANIMATION
             
             //GESTURE RECOGNIZER
             /*let singleTap = UITapGestureRecognizer(target: self, action: #selector(tapDetected))
@@ -61,30 +65,31 @@ class ViewController: UIViewController {
             shape.lineWidth = 10
             addChild(shape)*/
             
-            
-            //ANIMASI FLOATING BUBBLE
-            let bubblePath = UIBezierPath() //PATH BUAT ANIMASINYA
-            bubblePath.move(to: CGPoint(x: position.x, y: position.y)) //POSISI AWAL BUBBLE MUNCUL
+            //FLOATING BUBBLE ANIMATION
+            let animationDuration = Double.random(in: 7...10)
+            let bubblePath = UIBezierPath() //BUBBLE ANIMATION PATH
+            bubblePath.move(to: CGPoint(x: position.x, y: position.y)) //BUBBLE FIRST POSITION
             bubblePath.addCurve(to: CGPoint(x: .random(in: 25...389), y: .random(in: 25...871)), controlPoint1: CGPoint(x: .random(in: 25...389), y: .random(in: 25...871)), controlPoint2: CGPoint(x: .random(in: 25...389), y: .random(in: 25...871)))
             
-            let anim = CAKeyframeAnimation(keyPath: "position") //ANIMATE OBJECT SESUAI PATH NYA
+            let anim = CAKeyframeAnimation(keyPath: "position") //ANIMATE OBJECT THROUGH THE BEZIER PATH
             anim.path = bubblePath.cgPath
             //        anim.rotationMode = CAAnimationRotationMode.rotateAuto
             anim.repeatCount = 1
-            anim.duration = 7
+            anim.duration = animationDuration
             //anim.speed = 12.0
             bubbleView.layer.add(anim, forKey: "animate position along path")
             
             
-            //BUAT EXIT ANIMATION (BUBBLE NYA OTOMATIS ILANG SETELAH BBRP DETIK
+            //BUBBLE EXIT ANIMATION
             CATransaction.begin()
-            CATransaction.setCompletionBlock {
-                UIView.animate(withDuration: 0.5, delay: 5, options: .curveLinear, animations: {
+            CATransaction.setCompletionBlock { //BUBBLE WILL SCALE A BIT BEFORE POPPING
+                UIView.animate(withDuration: 0.5, delay: animationDuration-2, options: .curveLinear, animations: {
                     bubbleView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
                 }, completion: { (isFinish) in
                     UIView.animate(withDuration: 0, delay: 0, options: .curveLinear, animations: {
                         bubbleView.alpha = 0
                         self.playSoundBubblePop()
+                        self.notification.notificationOccurred(.success)
                     }, completion: nil)
                 })
             }
@@ -110,7 +115,7 @@ class ViewController: UIViewController {
         }
     }*/
     
-    //ANIMASI BUAT LABEL NYA
+    //LABEL ANIMATION FUNCTION
     func tapAnywhereLabelAnimation(){
         UIView.animate(withDuration: 0.4, delay: 0, options: [], animations: {
         self.TapAnywhereLabel.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
@@ -121,7 +126,7 @@ class ViewController: UIViewController {
         }
     }
     
-    //FUNCTION BUAT SFX BUBBLE SPAWN
+    //BUBBLE SPAWN SFX FUNCTION
     func playSoundBubbleSpawn() {
         let alertSound = URL(fileURLWithPath: Bundle.main.path(forResource: "BubbleSpawning", ofType: "mp3")!)
         print(alertSound)
@@ -134,7 +139,7 @@ class ViewController: UIViewController {
         audioPlayer!.play()
     }
     
-    //FUNCTION BUAT SFX BUBBLE POP
+    //BUBBLE POP SFX FUNCTION
     func playSoundBubblePop() {
         let alertSound = URL(fileURLWithPath: Bundle.main.path(forResource: "BubblePopping", ofType: "mp3")!)
         print(alertSound)
